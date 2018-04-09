@@ -22,7 +22,21 @@ def on_close(ws):
 
 def on_open(ws):
     def run(*args):
-        for i in range(2):
+        # turn on training mode
+        ws.send(json.dumps(get_training(1)))
+        # say it is me on the screen
+        ws.send(json.dumps(get_person('me')))
+        # send a few pictures
+        for i in range(3):
+            sleep(1)
+            ws.send(json.dumps(get_frame()))
+
+        # say it is not me on the screen
+        ws.send(json.dumps(get_person('not_me')))
+        # turn off training mode
+        ws.send(json.dumps(get_training(0)))
+        # send a few more pictures
+        for i in range(3):
             sleep(1)
             ws.send(json.dumps(get_frame()))
         sleep(1)
@@ -43,6 +57,16 @@ def get_frame():
     # print(frame)
     return frame
 
+def get_training(on):
+    return {
+       'type': 'TRAINING',
+       'val' : on}
+
+def get_person(name):
+    return {
+        'type': 'ADD_PERSON',
+        'val' : name}
+
 def init_camera():
     camera = PiCamera()
     camera.resolution = (1024, 768)
@@ -53,7 +77,7 @@ def init_camera():
 
 camera = init_camera()
 
-websocket.enableTrace(True)
+#websocket.enableTrace(True)
 ws = websocket.WebSocketApp("wss://192.168.0.110:9000/",
                             on_message = on_message,
                             on_error = on_error,
