@@ -1,4 +1,5 @@
 # rpi-camera-openface
+
 WIP: Simple python script to send images from pi camera to the remote openface installation
 
 Now it is able to read image from picamera, resize it to 300x400px and send to secure websocket

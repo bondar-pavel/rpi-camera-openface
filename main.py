@@ -2,6 +2,7 @@ from io import BytesIO
 from time import sleep
 from picamera import PiCamera
 
+import argparse
 import base64
 import websocket
 import ssl
@@ -75,10 +76,20 @@ def init_camera():
     sleep(2)
     return camera
 
+def parse_args():
+    # Instantiate the parser
+    parser = argparse.ArgumentParser(description='Stream rpi camera to openface')
+    parser.add_argument('--openface_host', default='192.168.0.110',
+                        help='An optional integer positional argument')
+    return parser.parse_args()
+
+args = parse_args()
 camera = init_camera()
 
 #websocket.enableTrace(True)
-ws = websocket.WebSocketApp("wss://192.168.0.110:9000/",
+openface = 'wss://' + args.openface_host + ':9000/'
+print('Connecting to ' + openface)
+ws = websocket.WebSocketApp(openface,
                             on_message = on_message,
                             on_error = on_error,
                             on_close = on_close)
